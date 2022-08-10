@@ -25,14 +25,15 @@ void order(int i, string name)
 {
 
     srand(time(nullptr));
-    kitchen_access.lock();
+    const lock_guard<std::mutex> lock(kitchen_access);
         this_thread::sleep_for(chrono::seconds(rand() % 6 + 10));
-        oderCount_access.lock();
+        {
+            const lock_guard<std::mutex> lock2(oderCount_access);
             countReady++;
             cout << "Oder N" << i <<" - "<< name << " ready!"<< endl;
             cout << countReady << " orders are ready for delivery!"<< endl;
-        oderCount_access.unlock();
-    kitchen_access.unlock();
+        }
+
 }
 void orderCreate()
 {
@@ -52,12 +53,12 @@ void delivery()
 {
     while(countDelivered < 10)
     {
+
         this_thread::sleep_for(chrono::seconds(30));
-        oderCount_access.lock();
+        const lock_guard<std::mutex> lock(oderCount_access);
             countDelivered += countReady;
             cout << "The courier took " << countReady << " orders." << " Total delivered orders count " <<  countDelivered << endl;
             countReady = 0;
-        oderCount_access.unlock();
     }
 
 }
