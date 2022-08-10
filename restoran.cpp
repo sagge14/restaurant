@@ -53,6 +53,7 @@ void delivery()
 {
     while(countDelivered < 10)
     {
+
         this_thread::sleep_for(chrono::seconds(30));
         const lock_guard<std::mutex> lock(oderCount_access);
             countDelivered += countReady;
